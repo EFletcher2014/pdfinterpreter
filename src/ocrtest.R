@@ -7,6 +7,7 @@ library(gWidgetstcltk)
 
 #GUI
 win <- gwindow("PDF Interpreter")
+
 grp_inputtype <- ggroup(container = win)
 label_input <- glabel("Input: ", container = grp_inputtype)
 inputType <- gradio(c("Single File", "Folder"), container = grp_inputtype)
@@ -24,11 +25,16 @@ addHandlerChanged(inputType, handler = function(h, ...){
     add(grp_inputtype, inputFolder)
   }
 })
-grp_input <- ggroup(container = grp_inputtype)
 
-#TODO: allow user to set output destination
+grp_output = ggroup(container = win)
+output_label = glabel("Output: ", container = grp_output)
+output_file = gfilebrowse("Select a file", type = "save", container = grp_output)
 
-#TODO: update this handler function to handle a file or a folder respectively
+
+#TODO: allow user to output to one file or multiple files
+
+#TODO: disable run button unless input and output destinations are chosen
+
 btnRunOCR <- gbutton("Run OCR", container = win, handler = function(h, ...) {
   
   if(svalue(inputType) == "Single File")
@@ -39,11 +45,13 @@ btnRunOCR <- gbutton("Run OCR", container = win, handler = function(h, ...) {
     files <- list.files(path=svalue(inputFolder), pattern = "*.tiff", full.names=TRUE, recursive=FALSE)
   }
   
-  sink("/Users/bandg/OneDrive/Documents/flashdrivestuff/Masters/Thesis/tempimages/1/page-3Text.txt")
+  sink(svalue(output_file))
   lapply(files, function(x) {
     
     color.image <- readImage(x)
     bw.image <- channel(color.image, "gray")
+    
+    #TODO: make image writing cleaner--allow user to select where to save them
     writeImage(bw.image, file = "/Users/bandg/OneDrive/Documents/flashdrivestuff/Masters/Thesis/tempimages/1/Page-3bw.png")
     image1 <- image_read("/Users/bandg/OneDrive/Documents/flashdrivestuff/Masters/Thesis/tempimages/1/Page-3bw.png")
     
@@ -62,7 +70,6 @@ btnRunOCR <- gbutton("Run OCR", container = win, handler = function(h, ...) {
     #print(text1)
     cat(text1)
   })
-  print("done")
   sink()
 })
 #TODO: Save text to PDF
