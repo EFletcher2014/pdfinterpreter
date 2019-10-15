@@ -28,7 +28,7 @@ addHandlerChanged(inputType, handler = function(h, ...){
 
 grp_output = ggroup(container = win)
 output_label = glabel("Output: ", container = grp_output)
-output_file = gfilebrowse("Select a file", type = "save", container = grp_output)
+output_file = gfilebrowse("Select a file", type = "save", container = grp_output, filter = c("txt"="txt"))
 
 
 #TODO: allow user to output to one file or multiple files
@@ -42,7 +42,7 @@ btnRunOCR <- gbutton("Run OCR", container = win, handler = function(h, ...) {
     files <- c(svalue(inputFile))
   }else 
   {
-    files <- list.files(path=svalue(inputFolder), pattern = "*.tiff", full.names=TRUE, recursive=FALSE)
+    files <- list.files(path=svalue(inputFolder), pattern = "*.(tiff|jpg|png|gif|bmp)", full.names=TRUE, recursive=FALSE)
   }
   
   sink(svalue(output_file))
@@ -71,5 +71,6 @@ btnRunOCR <- gbutton("Run OCR", container = win, handler = function(h, ...) {
     cat(text1)
   })
   sink()
+  done <- glabel("OCR Done!", container = win)
 })
 #TODO: Save text to PDF
